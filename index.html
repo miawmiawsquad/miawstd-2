@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>miawstudio — portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#2E4A63;
+  --ease:cubic-bezier(.5,.05,.1,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --head-h:56px;
+}
+html[data-theme="light"]{
+  --paper:#FFFFFF; --ink:#0B0B0C; --muted:#B4B4B0; --hair:#ECECEA; --stage:#F4F4F2; --acc:#2E4A63;
+}
+html[data-theme="dark"]{
+  --paper:#0B0B0C; --ink:#F3F3F0; --muted:#5A5A58; --hair:#1B1B1D; --stage:#141416; --acc:#6E9BC0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Space Grotesk",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+  transition:background .6s var(--ease),color .6s var(--ease);
+}
+::selection{background:var(--acc);color:var(--paper)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.mono{font-family:"Space Mono",monospace}
+
+/* header */
+.head{
+  position:fixed;inset:0 0 auto 0;height:var(--head-h);z-index:80;
+  display:flex;align-items:center;justify-content:space-between;padding:0 14px;
+  border-bottom:1px solid var(--hair);
+  background:color-mix(in srgb,var(--paper) 86%,transparent);backdrop-filter:blur(9px);
+}
+.brand{font-weight:600;font-size:15px;letter-spacing:-.01em}
+.brand b{color:var(--acc)}
+.modes{display:flex;gap:2px;position:absolute;left:50%;transform:translateX(-50%)}
+.modes button{
+  font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);padding:6px 13px;border:1px solid transparent;transition:.3s var(--ease);
+}
+.modes button.on{color:var(--ink);border-color:var(--hair)}
+.rgt{display:flex;align-items:center;gap:20px}
+.rgt .lnk{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);transition:color .3s var(--ease)}
+.rgt .lnk:hover,.rgt .lnk.on{color:var(--ink)}
+.theme{
+  display:flex;align-items:center;gap:6px;font-family:"Space Mono",monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--muted)
+}
+.theme .dot{width:11px;height:11px;border-radius:50%;border:1px solid var(--ink);
+  background:linear-gradient(90deg,var(--ink) 50%,transparent 50%);transition:.4s var(--ease)}
+
+/* pages */
+.page{position:fixed;inset:var(--head-h) 0 0 0;opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.page.show{opacity:1;pointer-events:auto}
+.mode{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .55s var(--ease)}
+.mode.show{opacity:1;pointer-events:auto}
+
+/* ============================================================
+   MODE: INDEX — full-bleed image behind big type
+   ============================================================ */
+#m-index{display:flex;flex-direction:column}
+.idx-bg{position:absolute;inset:0;z-index:0;background:var(--stage);overflow:hidden}
+.idx-bg .im{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transform:scale(1.08);transition:opacity .7s var(--ease),transform 1.3s var(--ease-out)}
+.idx-bg .im.on{opacity:1;transform:scale(1)}
+.idx-scrim{position:absolute;inset:0;background:var(--paper);opacity:1;transition:opacity .6s var(--ease);z-index:1}
+.idx-bg.active .idx-scrim{opacity:0}
+.idx-list{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;padding:2vh 0}
+.irow{
+  display:flex;align-items:baseline;gap:22px;padding:0 20px;height:1fr;
+  flex:1;cursor:pointer;position:relative;
+  border-bottom:1px solid var(--hair);
+  transition:padding .5s var(--ease-out);
+}
+.idx-bg.active ~ .idx-list .irow{border-color:transparent}
+.irow .in{font-family:"Space Mono",monospace;font-size:12px;color:var(--muted);width:34px;flex:none}
+.irow .nm{
+  font-size:clamp(26px,5.2vw,64px);font-weight:500;letter-spacing:-.025em;line-height:1;
+  transition:transform .5s var(--ease-out),opacity .4s var(--ease);
+}
+.irow .mt{margin-left:auto;text-align:right;opacity:0;transform:translateX(10px);transition:.5s var(--ease-out)}
+.irow .mt .c{font-size:10px;letter-spacing:.14em;text-transform:uppercase;display:block}
+.irow .mt .d{font-size:12px;color:var(--muted);max-width:30ch;margin-top:4px;line-height:1.4}
+/* when a row is active, put text in blend mode for legibility over image */
+.idx-bg.active ~ .idx-list .irow{mix-blend-mode:difference;color:#fff}
+.idx-bg.active ~ .idx-list .irow .in,
+.idx-bg.active ~ .idx-list .irow .mt .d{color:#bdbdbd}
+.idx-list .irow.hot{padding-left:34px}
+.idx-list .irow.hot .nm{transform:translateX(4px)}
+.idx-list .irow.hot .mt{opacity:1;transform:none}
+.idx-list.dimmed .irow:not(.hot) .nm{opacity:.32}
+
+/* ============================================================
+   MODE: GLOBE
+   ============================================================ */
+#m-globe{display:flex;align-items:center;justify-content:center}
+.globe-scene{position:absolute;inset:0;perspective:1200px;overflow:hidden;cursor:grab}
+.globe-scene.drag{cursor:grabbing}
+.globe{position:absolute;left:50%;top:50%;transform-style:preserve-3d;will-change:transform}
+.gnode{
+  position:absolute;left:0;top:0;will-change:transform,opacity;
+  transform-origin:center;margin-left:-42px;margin-top:-42px;
+}
+.gnode .th{
+  width:84px;height:84px;border-radius:3px;background-size:cover;background-position:center;
+  box-shadow:0 6px 22px rgba(0,0,0,.18);transition:box-shadow .3s var(--ease);
+  outline:0 solid var(--acc);
+}
+.gnode .lb{
+  position:absolute;left:50%;top:100%;transform:translate(-50%,6px);white-space:nowrap;
+  font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink);background:var(--paper);padding:3px 7px;border:1px solid var(--hair);
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease)}
+.gnode.hot{z-index:50!important}
+.gnode.hot .th{outline:2px solid var(--acc);box-shadow:0 10px 34px rgba(0,0,0,.28)}
+.gnode.hot .lb{opacity:1}
+.globe-hint{
+  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;
+  font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);pointer-events:none}
+.globe-expand{
+  position:absolute;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--paper) 78%,transparent);backdrop-filter:blur(4px);cursor:zoom-out}
+.globe-expand.on{display:flex}
+.ge-inner{position:relative;max-width:74vw;max-height:74vh}
+.ge-inner img{max-width:74vw;max-height:74vh;display:block;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.ge-cap{position:absolute;left:0;bottom:-40px;color:var(--ink)}
+.ge-cap .n{font-size:28px;font-weight:600;letter-spacing:-.02em}
+.ge-cap .c{font-family:"Space Mono",monospace;font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ============================================================
+   MODE: HORIZONTAL
+   ============================================================ */
+#m-horizontal{overflow:hidden}
+.h-track{position:absolute;top:0;left:0;height:100%;display:flex;will-change:transform}
+.h-panel{
+  position:relative;height:100%;width:60vw;flex:none;margin-right:2px;overflow:hidden;
+  background-size:cover;background-position:center;background-color:var(--stage);
+}
+.h-panel .hnum{
+  position:absolute;left:22px;top:18px;font-family:"Space Mono",monospace;font-size:12px;
+  color:#fff;mix-blend-mode:difference;z-index:3}
+.h-panel .hcap{position:absolute;left:22px;bottom:22px;z-index:3;color:#fff;mix-blend-mode:difference}
+.h-panel .hcap .n{font-size:clamp(24px,3vw,44px);font-weight:600;letter-spacing:-.02em;line-height:1}
+.h-panel .hcap .c{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.1em;margin-top:7px;opacity:.85}
+.h-panel .hcap .dd{font-size:12.5px;margin-top:8px;max-width:34ch;opacity:.9;line-height:1.4}
+.h-prog{
+  position:absolute;left:14px;right:14px;bottom:12px;height:1px;background:var(--hair);z-index:6}
+.h-prog .bar{position:absolute;left:0;top:0;height:100%;width:20%;background:var(--acc);transition:transform .15s linear}
+.h-hint{
+  position:absolute;right:16px;top:16px;z-index:6;font-family:"Space Mono",monospace;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none}
+.about::-webkit-scrollbar{display:none}
+.about-in{max-width:1100px;padding:8vh 20px 12vh;margin:0 auto}
+.about h1{font-size:clamp(38px,7vw,100px);font-weight:500;letter-spacing:-.03em;line-height:.98}
+.about h1 span{color:var(--muted)}
+.about h1 b{color:var(--acc);font-weight:500}
+.about-lead{margin-top:40px;max-width:60ch;font-size:clamp(16px,2vw,22px);line-height:1.5;color:var(--ink);opacity:.8}
+.about-grid{margin-top:8vh;display:grid;grid-template-columns:220px 1fr;gap:34px 60px;border-top:1px solid var(--hair);padding-top:40px}
+.about-grid+.about-grid{margin-top:40px}
+.about-grid h3{font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:400;padding-top:4px}
+.svc{display:grid;gap:2px}
+.svc-item{display:flex;justify-content:space-between;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--hair)}
+.svc-item .t{font-size:clamp(20px,2.4vw,30px);font-weight:500;letter-spacing:-.01em}
+.svc-item .d{font-size:12.5px;color:var(--muted);max-width:34ch;text-align:right}
+.contact-row{display:flex;flex-wrap:wrap;gap:10px 40px;align-items:baseline}
+.contact-row a{font-size:clamp(18px,2.4vw,30px);font-weight:500;letter-spacing:-.01em;border-bottom:1px solid transparent;transition:.3s var(--ease)}
+.contact-row a:hover{border-color:var(--acc);color:var(--acc)}
+.rv{opacity:0;transform:translateY(14px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+.rv.in{opacity:1;transform:none}
+
+@media(max-width:860px){
+  :root{--head-h:50px}
+  .modes{position:static;transform:none}
+  .modes button{padding:6px 9px;letter-spacing:.08em}
+  .rgt{gap:12px}
+  .rgt .lnk{display:none}
+  .irow .mt{display:none}
+  .irow .nm{font-size:clamp(30px,9vw,54px)}
+  .h-panel{width:82vw}
+  .gnode .th{width:64px;height:64px}
+  .gnode{margin-left:-32px;margin-top:-32px}
+  .about-grid{grid-template-columns:1fr;gap:18px}
+  .svc-item .d{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="head">
+  <button class="brand" data-go="portfolio">miaw<b>studio</b></button>
+  <div class="modes">
+    <button data-mode="index" class="on">Index</button>
+    <button data-mode="globe">Globe</button>
+    <button data-mode="horizontal">Horizontal</button>
+  </div>
+  <div class="rgt">
+    <button class="lnk on" data-go="portfolio">Work</button>
+    <button class="lnk" data-go="about">About</button>
+    <button class="theme" id="theme"><span class="dot"></span><span id="theme-t">Light</span></button>
+  </div>
+</header>
+
+<!-- PORTFOLIO -->
+<section class="page show" id="page-portfolio">
+
+  <!-- INDEX -->
+  <div class="mode show" id="m-index">
+    <div class="idx-bg" id="idx-bg"><div class="idx-scrim"></div></div>
+    <div class="idx-list" id="idx-list"></div>
+  </div>
+
+  <!-- GLOBE -->
+  <div class="mode" id="m-globe">
+    <div class="globe-scene" id="globe-scene">
+      <div class="globe" id="globe"></div>
+    </div>
+    <div class="globe-hint">Drag to spin · hover to reveal · click to open</div>
+    <div class="globe-expand" id="globe-expand">
+      <div class="ge-inner"><img id="ge-img" alt=""><div class="ge-cap"><div class="n" id="ge-n"></div><div class="c" id="ge-c"></div></div></div>
+    </div>
+  </div>
+
+  <!-- HORIZONTAL -->
+  <div class="mode" id="m-horizontal">
+    <div class="h-track" id="h-track"></div>
+    <div class="h-hint">Scroll →</div>
+    <div class="h-prog"><div class="bar" id="h-bar"></div></div>
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section class="page" id="page-about">
+  <div class="about">
+    <div class="about-in">
+      <h1 class="rv"><span>A design studio</span><br>shaping <b>form,</b> motion<br><span>&</span> identity.</h1>
+      <p class="about-lead rv">miawstudio is a small product &amp; brand practice. We build considered identities, interfaces, and image systems — favouring restraint, material honesty, and details that hold up close.</p>
+      <div class="about-grid rv">
+        <h3>Practice</h3>
+        <div class="svc">
+          <div class="svc-item"><span class="t">Branding</span><span class="d">Identity systems, wordmarks, packaging.</span></div>
+          <div class="svc-item"><span class="t">Digital</span><span class="d">Sites, interfaces, product design.</span></div>
+          <div class="svc-item"><span class="t">Motion</span><span class="d">Titles, reactive visuals, sequences.</span></div>
+          <div class="svc-item"><span class="t">Art Direction</span><span class="d">Campaigns, still-life, image systems.</span></div>
+        </div>
+      </div>
+      <div class="about-grid rv">
+        <h3>Contact</h3>
+        <div class="contact-row">
+          <a href="mailto:studio@miaw.studio">studio@miaw.studio</a>
+          <a href="#">Instagram</a><a href="#">Behance</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ---- data (same 10 works, no filter) ---- */
+const WORKS=[
+ {n:1, name:"Obsidian",  cat:"Branding",      yr:"2024", desc:"Identity system and packaging for a sculptural fragrance house.", url:"https://pikaso.cdnpk.net/private/production/5277290890/render.jpg?token=exp=1788220800~hmac=6f09e26960df3c44cb864519913f11adaffb20b926b81347105cad4a4f2ad409"},
+ {n:2, name:"Mirage",    cat:"Art Direction", yr:"2024", desc:"Campaign imagery and art direction for a resortwear debut.", url:"https://pikaso.cdnpk.net/private/production/5277292553/render.jpg?token=exp=1788220800~hmac=2434689a0a3dfac823fc61bebc003d09c8580fb5f9128a4513d6f69b402cb86e"},
+ {n:3, name:"Formless",  cat:"Digital",       yr:"2023", desc:"Fluid product site for an experimental 3D-print studio.", url:"https://pikaso.cdnpk.net/private/production/5277293472/render.jpg?token=exp=1788220800~hmac=2b82ea688e09f72a6a55049d20ca89cfd947547f7005cce2d403ec711909ae64"},
+ {n:4, name:"Nocturne",  cat:"Motion",        yr:"2024", desc:"Title sequence for a late-night independent film series.", url:"https://pikaso.cdnpk.net/private/production/5277292394/render.jpg?token=exp=1788220800~hmac=bb77b05d93347a3554039a07f33b60b25ac7897d9928ccdec987fbd8d9e72fc1"},
+ {n:5, name:"Monolith",  cat:"Branding",      yr:"2023", desc:"Wordmark, print and packaging for a stone atelier.", url:"https://pikaso.cdnpk.net/private/production/5277294456/render.jpg?token=exp=1788220800~hmac=ede6dcc40121745157d96b4beaf5129318675154f7b22799a19b9c86dbad553e"},
+ {n:6, name:"Drift",     cat:"Digital",       yr:"2025", desc:"Interface and brand for an ambient sound platform.", url:"https://pikaso.cdnpk.net/private/production/5277294831/render.jpg?token=exp=1788220800~hmac=f0f0f74bbcdc8292e6af36972b8b25a8fa96153cbd7c9f5c4728e10b1840e358"},
+ {n:7, name:"Vessel",    cat:"Art Direction", yr:"2023", desc:"Still-life direction for a hand-built ceramics label.", url:"https://pikaso.cdnpk.net/private/production/5277294083/render.jpg?token=exp=1788220800~hmac=1f952db15b94c0b7e8ae8f70d6b493cc013ddd9542e8dfa2fc2109328d0327ca"},
+ {n:8, name:"Echo",      cat:"Motion",        yr:"2024", desc:"Reactive visuals for a live audio performance set.", url:"https://pikaso.cdnpk.net/private/production/5277295797/render.jpg?token=exp=1788220800~hmac=abdd078285ee49c43373f092c78a5a4b6b8f056d8452bdba896299efdc99a532"},
+ {n:9, name:"Strata",    cat:"Branding",      yr:"2025", desc:"Layered visual identity for an architecture firm.", url:"https://pikaso.cdnpk.net/private/production/5277296364/render.jpg?token=exp=1788220800~hmac=6a04583b13909248eb8144b8b47094eb7e315db120cc070120d6c32684bcb374"},
+ {n:10,name:"Halo",      cat:"Digital",       yr:"2024", desc:"Minimal storefront and identity for a lighting brand.", url:"https://pikaso.cdnpk.net/private/production/5277296672/render.jpg?token=exp=1788220800~hmac=f2507b9cac80794c2d639f1c1c2d1d3a6f2eb5b0b123dc56e9e2d568dd2ce8f7"}
+];
+const pad=n=>String(n).padStart(2,'0');
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+/* ============================================================
+   THEME
+   ============================================================ */
+const themeBtn=document.getElementById('theme');
+themeBtn.onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',next);
+  document.getElementById('theme-t').textContent=next[0].toUpperCase()+next.slice(1);
+};
+
+/* ============================================================
+   MODE: INDEX
+   ============================================================ */
+const idxBg=document.getElementById('idx-bg');
+const idxList=document.getElementById('idx-list');
+WORKS.forEach(w=>{
+  const im=document.createElement('div');im.className='im';im.dataset.n=w.n;
+  im.style.backgroundImage=`url("${w.url}")`;
+  idxBg.appendChild(im);
+});
+const idxImgs=[...idxBg.querySelectorAll('.im')];
+WORKS.forEach(w=>{
+  const r=document.createElement('div');r.className='irow';r.dataset.n=w.n;
+  r.innerHTML=`<div class="in mono">${pad(w.n)}</div>
+    <div class="nm">${w.name}</div>
+    <div class="mt"><span class="c">${w.cat} · ${w.yr}</span><span class="d">${w.desc}</span></div>`;
+  r.addEventListener('mouseenter',()=>idxHot(w.n));
+  idxList.appendChild(r);
+});
+const idxRows=[...idxList.querySelectorAll('.irow')];
+function idxHot(n){
+  idxBg.classList.add('active');
+  idxList.classList.add('dimmed');
+  idxImgs.forEach(im=>im.classList.toggle('on',+im.dataset.n===n));
+  idxRows.forEach(r=>r.classList.toggle('hot',+r.dataset.n===n));
+}
+function idxReset(){
+  idxBg.classList.remove('active');idxList.classList.remove('dimmed');
+  idxImgs.forEach(im=>im.classList.remove('on'));
+  idxRows.forEach(r=>r.classList.remove('hot'));
+}
+document.getElementById('m-index').addEventListener('mouseleave',idxReset);
+
+/* ============================================================
+   MODE: GLOBE
+   ============================================================ */
+const scene=document.getElementById('globe-scene');
+const globe=document.getElementById('globe');
+const N=WORKS.length;
+const PHI=Math.PI*(3-Math.sqrt(5));
+const base=WORKS.map((w,i)=>{
+  const y=1-(i/(N-1))*2, r=Math.sqrt(1-y*y), t=PHI*i;
+  return {x:Math.cos(t)*r, y, z:Math.sin(t)*r, w};
+});
+const nodes=base.map(b=>{
+  const el=document.createElement('div');el.className='gnode';el.dataset.n=b.w.n;
+  el.innerHTML=`<div class="th" style="background-image:url('${b.w.url}')"></div><div class="lb">${pad(b.w.n)} · ${b.w.name}</div>`;
+  el.addEventListener('mouseenter',()=>{el.classList.add('hot');hoverN=b.w.n;});
+  el.addEventListener('mouseleave',()=>{el.classList.remove('hot');if(hoverN===b.w.n)hoverN=null;});
+  el.addEventListener('click',()=>openExpand(b.w));
+  globe.appendChild(el);
+  return {el,b};
+});
+let rotX=-.2, rotY=0, velX=0, velY=0, dragging=false, hoverN=null;
+let R=340;
+function calcR(){R=Math.min(scene.clientWidth,scene.clientHeight)*0.34;}
+function renderGlobe(){
+  const cx=Math.cos(rotX),sx=Math.sin(rotX),cy=Math.cos(rotY),sy=Math.sin(rotY);
+  nodes.forEach(({el,b})=>{
+    // rotateY then rotateX
+    let x1=b.x*cy+b.z*sy, z1=-b.x*sy+b.z*cy, y1=b.y;
+    let y2=y1*cx - z1*sx, z2=y1*sx + z1*cx, x2=x1;
+    const depth=(z2+1)/2;                 // 0 back .. 1 front
+    const sc=0.62+depth*0.55;
+    el.style.transform=`translate3d(${x2*R}px,${-y2*R}px,${z2*R}px) scale(${sc})`;
+    el.style.opacity=(0.25+depth*0.75).toFixed(3);
+    el.style.zIndex=Math.round(depth*100);
+    el.style.pointerEvents=z2<-0.15?'none':'auto';
+  });
+}
+function loopGlobe(){
+  if(globeActive){
+    if(!dragging){
+      if(!hoverN) rotY+=0.0016;           // gentle auto-rotate
+      rotY+=velY; rotX=clamp(rotX+velX,-1.15,1.15);
+      velX*=0.94; velY*=0.94;
+    }
+    renderGlobe();
+  }
+  requestAnimationFrame(loopGlobe);
+}
+/* drag */
+let lx=0,ly=0;
+function down(e){dragging=true;scene.classList.add('drag');const p=pt(e);lx=p.x;ly=p.y;velX=velY=0;}
+function move(e){ if(!dragging)return; const p=pt(e); const dx=p.x-lx,dy=p.y-ly; lx=p.x;ly=p.y;
+  rotY+=dx*0.006; rotX=clamp(rotX+dy*0.006,-1.15,1.15); velY=dx*0.006; velX=dy*0.006; }
+function up(){dragging=false;scene.classList.remove('drag');}
+function pt(e){return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY};}
+scene.addEventListener('mousedown',down);window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+scene.addEventListener('touchstart',down,{passive:true});window.addEventListener('touchmove',move,{passive:true});window.addEventListener('touchend',up);
+/* expand */
+const gExpand=document.getElementById('globe-expand');
+function openExpand(w){
+  document.getElementById('ge-img').src=w.url;
+  document.getElementById('ge-n').textContent=w.name;
+  document.getElementById('ge-c').textContent=w.cat+" — "+w.yr;
+  gExpand.classList.add('on');
+}
+gExpand.addEventListener('click',()=>gExpand.classList.remove('on'));
+let globeActive=false;
+calcR();renderGlobe();requestAnimationFrame(loopGlobe);
+window.addEventListener('resize',()=>{calcR();renderGlobe();layoutH();});
+
+/* ============================================================
+   MODE: HORIZONTAL (seamless loop)
+   ============================================================ */
+const hTrack=document.getElementById('h-track');
+const hBar=document.getElementById('h-bar');
+function buildHSet(){
+  const frag=document.createDocumentFragment();
+  WORKS.forEach(w=>{
+    const p=document.createElement('div');p.className='h-panel';
+    p.style.backgroundImage=`url('${w.url}')`;
+    p.innerHTML=`<div class="hnum mono">${pad(w.n)} / ${pad(WORKS.length)}</div>
+      <div class="hcap"><div class="n">${w.name}</div><div class="c">${w.cat} · ${w.yr}</div><div class="dd">${w.desc}</div></div>`;
+    frag.appendChild(p);
+  });
+  return frag;
+}
+hTrack.appendChild(buildHSet());hTrack.appendChild(buildHSet());
+let hx=0,htarget=0,setW=0;
+function layoutH(){ const first=hTrack.querySelector('.h-panel'); if(!first)return;
+  setW=(first.offsetWidth+2)*WORKS.length; }
+function hWheel(e){ if(!horizActive)return; e.preventDefault();
+  htarget+=(Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX); }
+document.getElementById('m-horizontal').addEventListener('wheel',hWheel,{passive:false});
+/* drag horizontal */
+let hDown=false,hlx=0;
+const hMode=document.getElementById('m-horizontal');
+hMode.addEventListener('mousedown',e=>{hDown=true;hlx=e.clientX;});
+window.addEventListener('mousemove',e=>{if(hDown){htarget-=(e.clientX-hlx);hlx=e.clientX;}});
+window.addEventListener('mouseup',()=>hDown=false);
+hMode.addEventListener('touchstart',e=>{hDown=true;hlx=e.touches[0].clientX;},{passive:true});
+hMode.addEventListener('touchmove',e=>{if(hDown){htarget-=(e.touches[0].clientX-hlx);hlx=e.touches[0].clientX;}},{passive:true});
+hMode.addEventListener('touchend',()=>hDown=false);
+function loopH(){
+  hx+=(htarget-hx)*0.09;
+  if(setW>0){ if(hx>=setW){hx-=setW;htarget-=setW;} else if(hx<0){hx+=setW;htarget+=setW;} }
+  hTrack.style.transform=`translateX(${-hx}px)`;
+  if(setW>0)hBar.style.transform=`translateX(${(hx%setW)/setW*400}%)`;
+  requestAnimationFrame(loopH);
+}
+requestAnimationFrame(loopH);
+
+/* ============================================================
+   MODE SWITCH
+   ============================================================ */
+let horizActive=false;
+const modeEls={index:document.getElementById('m-index'),globe:document.getElementById('m-globe'),horizontal:document.getElementById('m-horizontal')};
+let curMode='index';
+document.querySelectorAll('.modes button').forEach(b=>{
+  b.onclick=()=>{
+    const m=b.dataset.mode; if(m===curMode)return; curMode=m;
+    document.querySelectorAll('.modes button').forEach(x=>x.classList.toggle('on',x===b));
+    Object.entries(modeEls).forEach(([k,el])=>el.classList.toggle('show',k===m));
+    globeActive=(m==='globe'); horizActive=(m==='horizontal');
+    if(m==='globe'){calcR();renderGlobe();}
+    if(m==='horizontal'){layoutH();}
+    if(m==='index')idxReset();
+  };
+});
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+const pP=document.getElementById('page-portfolio'),pA=document.getElementById('page-about');
+function go(page){
+  const work=page==='portfolio';
+  pP.classList.toggle('show',work);pA.classList.toggle('show',!work);
+  document.querySelector('.modes').style.opacity=work?'1':'0';
+  document.querySelector('.modes').style.pointerEvents=work?'auto':'none';
+  document.querySelectorAll('[data-go]').forEach(b=>{
+    if(b.classList.contains('lnk'))b.classList.toggle('on',b.dataset.go===page);
+  });
+  if(!work){document.querySelectorAll('#page-about .rv').forEach((el,i)=>setTimeout(()=>el.classList.add('in'),80+i*90));}
+}
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* init layout */
+layoutH();
+</script>
+</body>
+</html>
